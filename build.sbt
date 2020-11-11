@@ -20,7 +20,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.12.12"
 
 /*
     **********************************************************************************
@@ -233,3 +233,15 @@ dist := (dist dependsOn assembly).value
 clean := (clean dependsOn rmDist dependsOn rmTemp).value
 
 clean := (clean dependsOn (removeJar in Test in `spark-launch`)).value
+
+publishMavenStyle := true
+publishArtifact in Test := false
+pomIncludeRepository := { _ => false }
+publishTo in ThisBuild := {
+  val repo = "https://maven.aksw.org/archiva/repository/"
+  if (isSnapshot.value)
+    Some("snapshots" at repo + "snapshots")
+  else
+    Some("releases"  at repo + "internal")
+}
+credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
